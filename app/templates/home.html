@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mb-8 max-w-xl mx-auto">
+    <form action="/" method="GET" class="flex gap-2">
+        <input type="text" name="search" placeholder="Search for useless items..." value="{{ search_query }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:border-indigo-500">
+        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition shadow-sm">Search</button>
+    </form>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for product in products %}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition">
+            <div class="bg-gray-50 flex items-center justify-center p-4 h-48 border-b border-gray-100">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="h-full object-contain">
+            </div>
+            <div class="p-5 flex flex-col flex-grow">
+                <h3 class="font-bold text-gray-800 text-lg mb-1 line-clamp-1">{{ product.name }}</h3>
+                <p class="text-gray-500 text-sm mb-4 flex-grow line-clamp-3">{{ product.description }}</p>
+                <div class="flex items-center justify-between mt-auto">
+                    <span class="text-xl font-extrabold text-gray-900">₹{{ "{:,.2f}".format(product.price) }}</span>
+                    <form action="/cart/add/{{ product.id }}" method="POST">
+    <form action="/cart/add/{{ product.id }}" method="POST" class="inline-block m-0 p-0">
+    <button type="submit" class="bg-indigo-600 text-white font-semibold px-4 py-1.5 rounded-lg text-sm hover:bg-indigo-700 transition flex items-center justify-center min-w-[110px]">
+        Add to Cart
+    </button>
+</form>
+</form>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-span-full text-center py-12">
+            <p class="text-gray-500 text-lg">No absurd products found matching your search. Try looking for an NFT!</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

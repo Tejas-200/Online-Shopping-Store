@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="text-2xl font-bold text-gray-800 mb-6">Your Shopping Cart</h2>
+
+{% if cart_items %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-4">
+        {% for item in cart_items %}
+        <div class="bg-white rounded-xl border border-gray-100 p-4 flex gap-4 items-center shadow-sm">
+            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" class="w-20 h-20 object-contain bg-gray-50 rounded">
+            <div class="flex-grow">
+                <h3 class="font-bold text-gray-800">{{ item.product.name }}</h3>
+                <span class="text-gray-600 text-sm block mb-2">₹{{ "{:,.2f}".format(item.product.price) }} each</span>
+                
+                <form action="/cart/remove/{{ item.id }}" method="POST">
+                    <button type="submit" class="text-xs text-red-500 hover:underline">Remove Item</button>
+                </form>
+            </div>
+            <div class="text-right">
+                <span class="font-bold text-lg text-gray-900 block">Qty: {{ item.quantity }}</span>
+                <span class="text-gray-400 text-xs">Total: ₹{{ "{:,.2f}".format(item.product.price * item.quantity) }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="bg-white border border-gray-100 rounded-xl p-6 shadow-sm h-fit">
+        <h3 class="font-bold text-lg text-gray-800 border-b pb-3 mb-4">Order Summary</h3>
+        <div class="flex justify-between items-center mb-6">
+            <span class="text-gray-600">Subtotal:</span>
+            <span class="text-2xl font-black text-gray-900">₹{{ "{:,.2f}".format(cart_total) }}</span>
+        </div>
+        <form action="/checkout" method="POST">
+    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg shadow transition">
+        Proceed to Checkout
+    </button>
+</form>
+    </div>
+</div>
+{% else %}
+<div class="bg-white rounded-xl p-12 text-center border border-gray-100 max-w-lg mx-auto">
+    <p class="text-gray-500 text-lg mb-4">Your cart is currently holding absolutely nothing.</p>
+    <a href="/" class="bg-indigo-600 text-white font-bold px-6 py-2 rounded-lg hover:bg-indigo-700 transition">Go Add Parody Items</a>
+</div>
+{% endif %}
+{% endblock %}

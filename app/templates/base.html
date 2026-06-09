@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParodyMart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+<div id="page-loading-overlay" class="fixed inset-0 bg-gray-50 z-50 hidden p-6 container mx-auto">
+    <div class="h-12 bg-gray-200 rounded-lg animate-pulse mb-8"></div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for _ in range(4) %}
+        <div class="bg-white rounded-xl p-5 border border-gray-100 space-y-4 shadow-sm">
+            <div class="bg-gray-200 h-48 rounded-lg animate-pulse"></div>
+            <div class="h-5 bg-gray-200 rounded animate-pulse w-3/4"></div>
+            <div class="h-4 bg-gray-200 rounded animate-pulse w-full"></div>
+            <div class="h-4 bg-gray-200 rounded animate-pulse w-5/6"></div>
+            <div class="flex justify-between items-center pt-2">
+                <div class="h-6 bg-gray-200 rounded animate-pulse w-1/4"></div>
+                <div class="h-8 bg-gray-200 rounded-lg animate-pulse w-1/3"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+    <nav class="bg-indigo-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="text-xl font-bold tracking-wider">🎭 ParodyMart</a>
+            <div class="flex items-center space-x-6">
+                {% if session.get('user_id') %}
+                    <div class="bg-indigo-700 px-3 py-1.5 rounded-lg border border-indigo-500 text-sm flex items-center gap-1.5">
+                        <span>💰 Balance:</span>
+                        <span class="font-bold text-yellow-300">₹{{ "{:,.2f}".format(current_wallet_balance) }}</span>
+                        <a href="/wallet" class="ml-2 bg-indigo-500 hover:bg-indigo-400 text-xs text-white font-bold px-2 py-0.5 rounded transition">+ Add</a>
+                    </div>
+                    
+                  
+			<a href="/cart" class="hover:text-indigo-200 font-medium transition flex items-center gap-1">🛒 Cart</a>
+<a href="/orders" class="hover:text-indigo-200 font-medium transition">📋 Orders</a>
+                    <a href="/logout" class="text-sm bg-indigo-500 hover:bg-indigo-700 px-3 py-1.5 rounded transition">Logout</a>
+                {% else %}
+                    <a href="/login" class="hover:text-indigo-200 transition">Login</a>
+                    <a href="/register" class="bg-white text-indigo-600 px-3 py-1.5 rounded font-medium hover:bg-indigo-50 transition">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 mb-4 rounded border {% if category == 'error' %}bg-red-100 border-red-400 text-red-700{% else %}bg-green-100 border-green-400 text-green-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="flex-grow container mx-auto px-4 py-6">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-gray-400 text-center py-4 text-xs border-t border-gray-700">
+        <p class="font-semibold text-yellow-500 mb-1">⚠️ SYSTEM DISCLAIMER: NO REAL MONEY OR REAL PRODUCTS INVOLVED.</p>
+        <p>&copy; 2026 ParodyMart. Built for educational and entertainment purposes.</p>
+    </footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Track whether we should skip the skeleton screen overlay
+        let skipSkeleton = false;
+
+        // 1. Handle Page Transition Skeleton Layouts
+        window.addEventListener('beforeunload', function () {
+            if (!skipSkeleton) {
+                document.getElementById('page-loading-overlay').classList.remove('hidden');
+            }
+        });
+
+        // 2. Handle Inline Button Spinners for Forms
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function (e) {
+                const button = form.querySelector('button[type="submit"]');
+                if (button) {
+                    // Check if this is an "Add to Cart" action
+                    if (button.textContent.trim().includes("Add to Cart")) {
+                        skipSkeleton = true; // Skip the giant skeleton overlay
+                    }
+
+                    // Prevent double-clicks
+                    button.disabled = true;
+                    button.classList.add('opacity-75', 'cursor-not-allowed');
+                    
+                    // Inject the spinning SVG inline
+                    button.innerHTML = `
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Packing...
+                    `;
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

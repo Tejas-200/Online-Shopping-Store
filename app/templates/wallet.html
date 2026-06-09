@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-xl shadow-md p-8 mt-6 border border-gray-100">
+    <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Your Fake Wallet</h2>
+        <p class="text-gray-500 text-sm mt-1">Unlimited economic power, zero real-world value.</p>
+    </div>
+
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-6 text-white text-center shadow-sm mb-6">
+        <span class="text-indigo-100 text-xs font-semibold uppercase tracking-wider block mb-1">Available Funds</span>
+        <span class="text-4xl font-extrabold text-yellow-300">₹{{ "{:,.2f}".format(current_wallet_balance) }}</span>
+    </div>
+
+    <form action="/wallet/add" method="POST" class="space-y-4">
+        <label class="block text-sm font-bold text-gray-700">Select Fake Stimulus Package:</label>
+        <div class="grid grid-cols-3 gap-3">
+            <button type="submit" name="amount" value="500" class="border-2 border-indigo-500 hover:bg-indigo-50 text-indigo-700 font-bold py-3 rounded-lg text-sm transition focus:bg-indigo-600 focus:text-white">
+                + ₹500
+            </button>
+            <button type="submit" name="amount" value="1000" class="border-2 border-indigo-500 hover:bg-indigo-50 text-indigo-700 font-bold py-3 rounded-lg text-sm transition focus:bg-indigo-600 focus:text-white">
+                + ₹1,000
+            </button>
+            <button type="submit" name="amount" value="5000" class="border-2 border-indigo-500 hover:bg-indigo-50 text-indigo-700 font-bold py-3 rounded-lg text-sm transition focus:bg-indigo-600 focus:text-white">
+                + ₹5,000
+            </button>
+        </div>
+        <p class="text-xs text-center text-red-500 font-medium pt-2">⚠️ Clicking these buttons will write simulated credit events directly into your database. No credit card required.</p>
+    </form>
+</div>
+{% endblock %}
