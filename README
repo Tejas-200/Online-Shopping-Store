@@ -1,0 +1,112 @@
+
+# 🎭 ParodyMart (Fake E-Commerce with Fake Wallet)
+
+A lightweight, enterprise-grade, fully simulated online shopping platform where users can browse absurd parody products, mint fake money into a personal virtual wallet, and execute high-integrity checkout workflows—all with **absolute zero financial risk**.
+
+**🌐 Live Demo Link:** https://online-shopping-store-zp2b.onrender.com/
+
+---
+
+## 🚀 Key Features
+
+* **Secure Authentication System:** Account registration and login powered by session-based states and cryptographically safe password hashing via `bcrypt` (`Werkzeug`).
+* **Absurd Product Storefront:** A curated catalog of comedy products populated with dynamic, custom-generated robot avatars using the `Robohash` engine. Includes case-insensitive search routing.
+* **Fake Central-Bank Wallet:** A private, simulated financial dashboard allowing users to credit their profile with immediate custom funding presets (`₹500`, `₹1,000`, `₹5,000`).
+* **Atomic Checkout Routine:** Multi-table order-fulfillment logic wrapped entirely within a pessimistic database row-lock (`SELECT ... FOR UPDATE`) preventing double-spending and guaranteeing strict data integrity (`ACID` compliance).
+* **Modern UX Transitions:** Custom asynchronously intercepted forms displaying inline spinner loaders, alongside global page-transition pulsed skeleton layouts.
+* **Production Safeguards:** Global app rate-limiting (`Flask-Limiter`), secure Cross-Origin Resource Isolation (`Flask-CORS`), self-contained token-based password recovery, custom error handling screens (`404`/`500`), and rotating server-side log auditing.
+
+---
+
+## 🛠️ The Tech Stack
+
+* **Backend Framework:** Python + Flask (Lightweight Micro-framework)
+* **Database:** Serverless PostgreSQL hosted via **Neon.tech**
+* **Database ORM:** Flask-SQLAlchemy (Object Relational Mapper)
+* **Frontend Design:** HTML5 + Tailwind CSS (via CDN) + Native JavaScript
+* **Hosting Platform:** Render.com (Free Web Service Container Tier)
+
+---
+
+## 📊 Database Schema Blueprint
+
+The application architecture utilizes a relational model mapped cleanly across 6 database tables:
+
+* `users`: Tracks profile configurations, administrative privileges, and high-precision decimal `wallet_balance`.
+* `products`: Holds static catalog information including names, descriptions, prices, and asset URLs.
+* `cart`: A high-speed cache caching active relational states between users and target product quantities.
+* `orders`: The permanent historical master record for complete checkout purchases.
+* `order_items`: Permanent snapshot line-items mapping specific products and prices captured at exact timestamp boundaries.
+* `wallet_transactions`: An immutable audit trail documenting credit (load funds) and debit (checkout purchases) events.
+
+---
+
+## ⚙️ Local Development Setup
+
+To run this repository locally on your machine, follow these steps:
+
+### 1. Clone the repository and navigate inward
+```bash
+git clone [https://github.com/YOUR_USERNAME/parody-mart.git](https://github.com/YOUR_USERNAME/parody-mart.git)
+cd parody-mart
+
+```
+
+### 2. Create and activate an isolated Python virtual environment
+
+```bash
+python -m venv venv
+
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows (Command Prompt):
+venv\Scripts\activate
+
+```
+
+### 3. Install required environment dependencies
+
+```bash
+pip install -r requirements.txt
+
+```
+
+### 4. Configure local environment environment variables
+
+Create a file named `.env` in the root folder and supply your secret values:
+
+```env
+SECRET_KEY=any_random_secure_hexadecimal_string
+DATABASE_URL=postgresql://your_neon_username:your_password@your_neon_host/neondb?sslmode=require
+
+```
+
+### 5. Initialize & Seed your Database
+
+Run the seeder automation script to let SQLAlchemy map out the schema into Neon and inject your initial comedy items:
+
+```bash
+python seed.py
+
+```
+
+### 6. Boot the local development server
+
+```bash
+python run.py
+
+```
+
+Open your browser and visit: `http://127.0.0.1:5000/`
+
+---
+
+## ⚠️ Important Hosting Disclaimer
+
+> **NOTE FOR EVALUATORS:** This application is hosted using Render's free operational cloud container tier. Free containers automatically spin down into a sleep state after 15 minutes of user inactivity. If clicking the live application link for the first time, the system may require **up to 1 minute** to wake up and spin up the backend container environment. Thank you for your patience!
+
+---
+
+## 📜 License
+
+This project is open-source and available under the [MIT License](https://www.google.com/search?q=LICENSE).
