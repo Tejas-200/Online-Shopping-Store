@@ -1,6 +1,4 @@
 
-
-```markdown
 <div align="center">
 
 # 🎭 ParodyMart — High-Integrity Parody E-Commerce Platform
