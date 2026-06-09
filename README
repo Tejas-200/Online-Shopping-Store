@@ -1,112 +1,439 @@
 
-# 🎭 ParodyMart (Fake E-Commerce with Fake Wallet)
 
-A lightweight, enterprise-grade, fully simulated online shopping platform where users can browse absurd parody products, mint fake money into a personal virtual wallet, and execute high-integrity checkout workflows—all with **absolute zero financial risk**.
+```markdown
+<div align="center">
 
-**🌐 Live Demo Link:** https://online-shopping-store-zp2b.onrender.com/
+# 🎭 ParodyMart — High-Integrity Parody E-Commerce Platform
 
----
+**A lightweight, enterprise-grade, fully simulated online shopping platform with zero financial risk.**
 
-## 🚀 Key Features
+[Features](#-key-features) • [Architecture](#-system-architecture) • [Database Schema](#-database-schema-blueprint) • [API Docs](#-api-endpoints) • [Setup](#-setup-instructions) • [Workflows](#-core-workflows)
 
-* **Secure Authentication System:** Account registration and login powered by session-based states and cryptographically safe password hashing via `bcrypt` (`Werkzeug`).
-* **Absurd Product Storefront:** A curated catalog of comedy products populated with dynamic, custom-generated robot avatars using the `Robohash` engine. Includes case-insensitive search routing.
-* **Fake Central-Bank Wallet:** A private, simulated financial dashboard allowing users to credit their profile with immediate custom funding presets (`₹500`, `₹1,000`, `₹5,000`).
-* **Atomic Checkout Routine:** Multi-table order-fulfillment logic wrapped entirely within a pessimistic database row-lock (`SELECT ... FOR UPDATE`) preventing double-spending and guaranteeing strict data integrity (`ACID` compliance).
-* **Modern UX Transitions:** Custom asynchronously intercepted forms displaying inline spinner loaders, alongside global page-transition pulsed skeleton layouts.
-* **Production Safeguards:** Global app rate-limiting (`Flask-Limiter`), secure Cross-Origin Resource Isolation (`Flask-CORS`), self-contained token-based password recovery, custom error handling screens (`404`/`500`), and rotating server-side log auditing.
+</div>
 
 ---
 
-## 🛠️ The Tech Stack
+## 📌 Project Overview
 
-* **Backend Framework:** Python + Flask (Lightweight Micro-framework)
-* **Database:** Serverless PostgreSQL hosted via **Neon.tech**
-* **Database ORM:** Flask-SQLAlchemy (Object Relational Mapper)
-* **Frontend Design:** HTML5 + Tailwind CSS (via CDN) + Native JavaScript
-* **Hosting Platform:** Render.com (Free Web Service Container Tier)
+ParodyMart is a production-oriented **full-stack microservices e-commerce simulator** that integrates user authentication, an arbitrary-precision fake wallet dashboard, and real-time cart state management using server-side Jinja2 rendering.
+
+The platform isolates all operations using parallel relational structures in PostgreSQL:
+- **Pessimistic concurrency control** (SQLAlchemy `.with_for_update()`)
+- **Arbitrary-precision math calculations** (Python `decimal.Decimal` module)
+- **Token-based password recovery simulation** (Cryptographically secure `secrets` token strings)
+
+Every database transaction is completely isolated and evaluated instantly on the browser with interactive, modern UX loading states.
+
+### Real-World Context
+
+Developing modern e-commerce software requires handling severe multi-user synchronization roadblocks. In production environments, standard operations can introduce vulnerabilities if executed poorly:
+
+- Dual rapid clicks on a checkout form can cause a financial "double-spend" state
+- Floating-point calculations introduce tiny precision rounding bugs (like `0.1 + 0.2 = 0.30000000000000004`)
+- Open endpoints without explicit decorators expose hidden directories to unauthorized sessions
+- Slower network roundtrips look glitchy to users if page frames reload instantly
+
+ParodyMart was designed explicitly to solve these web engineering challenges using clean backend design paradigms, tightly bound to an adaptive, responsive storefront UI.
 
 ---
 
-## 📊 Database Schema Blueprint
+## 🚨 Problem Statement
 
-The application architecture utilizes a relational model mapped cleanly across 6 database tables:
+| Problem | Impact |
+|---|---|
+| **Race Conditions & Double-Spending** | Rapid concurrent client clicks can exploit non-isolated data reads, draining account funds past safe limits. |
+| **Floating-Point Precision Bugs** | Processing prices as standard `float` objects introduces cumulative rounding artifacts across large invoices. |
+| **Broken Object-Level Authorization** | Open application routes expose sensitive user resources (like carts and transaction data) to public scrapers. |
+| **Server-Side UI Jitter** | Instant page reloads without intermediate transition feedback cause an unpolished user experience. |
+| **Credential Loss Vulnerabilities** | Users locked out of accounts have no secure, unphishable route to clear their password hashes. |
+| **Denial-of-Service / Bot Flooding** | Unregulated forms (like login or registry pages) can be exploited via automated brute-force scripts. |
 
-* `users`: Tracks profile configurations, administrative privileges, and high-precision decimal `wallet_balance`.
-* `products`: Holds static catalog information including names, descriptions, prices, and asset URLs.
-* `cart`: A high-speed cache caching active relational states between users and target product quantities.
-* `orders`: The permanent historical master record for complete checkout purchases.
-* `order_items`: Permanent snapshot line-items mapping specific products and prices captured at exact timestamp boundaries.
-* `wallet_transactions`: An immutable audit trail documenting credit (load funds) and debit (checkout purchases) events.
+---
+
+## 💡 Proposed Solution
+
+ParodyMart addresses these problems through four integrated subsystems:
+
+1. **Isolated ACID Transaction Layer** — The backend uses an explicit row-level database lock during checkout execution, enforcing rigorous transaction boundary protections.
+
+2. **High-Precision Numeric Engine** — Every financial calculation uses Python's native arbitrary-precision `Decimal` engine to perfectly preserve transaction audit trails.
+
+3. **Secure Token Recovery Pipeline** — Password resets utilize self-destructing, time-isolated token paths that trace secure actions directly to the server infrastructure logs.
+
+4. **Interactively Buffered Frontend UI** — Asynchronous JavaScript intercepts form elements to inject inline spinning elements, complemented by unified pulse skeleton templates for navigation.
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend & Templating
+| Technology | Version | Purpose |
+|---|---|---|
+| HTML5 / CSS3 | Standard | Structural frames and document rendering |
+| Tailwind CSS | 3.x (CDN) | Utility-first responsive web aesthetics |
+| Vanilla JavaScript | ES6+ | Form interception, DOM injection, loading timers |
+| Jinja2 Templates | 3.1.x | Server-side HTML interpolation and macro formatting |
+
+### Backend Framework
+| Technology | Version | Purpose |
+|---|---|---|
+| Python | 3.10+ | Primary programming runtime environment |
+| Flask | 3.0.x | Lightweight micro-framework REST API routing |
+| Flask-SQLAlchemy | 3.1.x | Object-Relational Mapping (ORM) database layer |
+| psycopg2-binary | 2.9.x | High-performance native PostgreSQL connection driver |
+| Werkzeug | 3.0.x | Cryptographically safe password hashing (`scrypt`) |
+| Flask-Limiter | 3.5.x | IP-based request rate-limiting engine |
+| Flask-CORS | 4.0.x | Cross-Origin Resource Sharing security configuration |
+| python-dotenv | 1.0.x | Runtime environmental configuration isolation |
+| Gunicorn | 21.2.x | Concurrent production WSGI web deployment server |
+
+### Infrastructure
+| Technology | Purpose |
+|---|---|
+| Neon.tech | Serverless cloud-hosted PostgreSQL storage layer |
+| Robohash API | Dynamic generation of unique comedy product avatar assets |
+| GitHub | Centralized version control and deployment source tracking |
+| Render.com | Production container hosting for the web app stack |
+
+---
+
+## 🧱 System Architecture
+
+### High-Level Overview
+
+
+```
+
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Client Web Browser                          │
+│               Tailwind CSS UI + Asynchronous JavaScript              │
+└─────────────────────────┬───────────────────────────────────────────┘
+│ HTTP Requests (Form Data / Cookies)
+▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    Flask Application (run.py)                       │
+│                                                                     │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │                     Middleware Controls                      │  │
+│  │   • Flask-Limiter (IP-based Request Throttling)              │  │
+│  │   • @login_required (Object Authorization Guards)            │  │
+│  │   • Flask-CORS (Cross-Origin Resource Insulation)             │  │
+│  └──────────────────────────────┬───────────────────────────────┘  │
+│                                 │ Protected Routing Passes          │
+│                                 ▼                                  │
+│  ┌──────────────────────────────────────────────────────────────┐  │
+│  │                   REST Controller Blueprints                 │  │
+│  │  /register  /login  /wallet/add  /cart/add  /checkout        │  │
+│  └──────────────────────────────┬───────────────────────────────┘  │
+└─────────────────────────────────┼───────────────────────────────────┘
+│ Secure Parameter Binding (SQLAlchemy)
+▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Neon Cloud PostgreSQL                          │
+│  Tables: users │ products │ cart │ orders │ order_items │ txns     │
+└─────────────────────────────────────────────────────────────────────┘
+
+```
+
+
+
+### Concurrency & Data Flow
+
+
+```
+
+Form Submission:
+User Clicks Button → JS intercepts event → Button changes to "Processing..."
+→ Disables input elements to block duplicate submissions
+
+Database Evaluation (ACID Checkout Route):
+Flask matches route → Opens transaction block → Triggers SELECT FOR UPDATE on User row
+→ Evaluates Decimal balance → Deducts funds → Flushes Order tables
+→ Clears Cart state → Commits transaction permanently to Neon
+
+Server-to-Client UI Response:
+Database commit success → Flask updates Session Cookie → Sets Flash Message strings
+→ Returns Redirect 302 → Browser draws fresh Jinja2 view
+
+```
+
+---
+
+## 📁 Folder Structure
+
+
+```
+
+parody-mart/
+│
+├── app/                              # Main application package core
+│   ├── **init**.py                   # Package root: initializes Flask extensions, CORS, Error templates
+│   ├── models.py                     # SQLAlchemy Database Schema Declarations (User, Product, Cart, etc.)
+│   ├── routes.py                     # Routing Controllers: processes endpoints, forms, and business logic
+│   │
+│   ├── static/                       # Local front-end static production buffers
+│   └── templates/                    # Server-side Jinja2 HTML layout frames
+│       ├── base.html                 # Main shell: houses nav bars, global loaders, flash toast elements
+│       ├── home.html                 # Storefront grid: houses product listings and live search query inputs
+│       ├── login.html                # User login credential portal interface
+│       ├── register.html             # Account generation input interface
+│       ├── cart.html                 # Active shopping bag aggregation panel with summary details
+│       ├── wallet.html               # Play-currency dashboard containing mock credit triggers
+│       ├── orders.html               # Completed historical checkout transaction logs
+│       ├── forgot_password.html      # Form to capture email for password recovery
+│       ├── reset_password.html       # Input field to securely overwrite account credential hashes
+│       ├── 404.html                  # Custom comedy resource fallback handler UI
+│       └── 500.html                  # Custom server exceptions fallback handler UI
+│
+├── .env                              # Hidden local environmental variable configurations (Secret keys, URLs)
+├── .gitignore                        # Standard configuration block isolating dependency directories from Git
+├── Procfile                          # Explicit process specification layout telling Gunicorn how to bind
+├── requirements.txt                  # Compiled production Python dependencies layout
+├── run.py                            # Application entry point: initializes context and runs structural setup
+└── seed.py                           # Automated script to populate Neon DB tables with initial comedy items
+
+```
+
+---
+
+## 🔐 Security & RBAC Guards
+
+### Rate Limiting Controls
+To isolate registration forms and login panels against automated script runners or malicious brute-force attempts, **Flask-Limiter** drops a localized throttling guard across auth scopes:
+* **Global Thresholds:** 100 requests per minute per unique client IP address.
+* **Authentication Boundaries:** Strict limit of 5 registration and login tracking post attempts per minute.
+
+### Explicit Authorization Route Guards
+To guarantee that unauthenticated web clients cannot bypass forms to inspect user assets, an explicit custom Python wrapper decorator (`@login_required`) locks down resource-heavy routing scopes:
+
+```python
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('user_id'):
+            flash("You must be logged in to view that resource.", "error")
+            return redirect(url_for('auth.login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+```
+
+---
+
+## 📡 API Endpoints
+
+All core application endpoints process input parameters using secure backend parameters, protecting the database layer from SQL injection artifacts.
+
+### Authentication Scope (`app.routes`)
+
+| Method | Path | Access | Description |
+| --- | --- | --- | --- |
+| `GET` / `POST` | `/register` | Public | Captures registration parameters, generates scrypt hashes, records new User rows. |
+| `GET` / `POST` | `/login` | Public | Validates login parameters against recorded database hashes, opens active Session. |
+| `GET` | `/logout` | Authenticated | Clears the state dictionary of the browser Session cookies completely. |
+| `GET` / `POST` | `/forgot-password` | Public | Validates user email, mints random token, outputs link directly to system log. |
+| `GET` / `POST` | `/reset-password/<token>` | Public | Validates time-restricted secure token parameter, overrides matching account password hash. |
+
+### Storefront & Checkout Scope (`app.routes`)
+
+| Method | Path | Access | Description |
+| --- | --- | --- | --- |
+| `GET` | `/` | Public | Pulls active inventory listings. Integrates case-insensitive parameters for live text filtering. |
+| `GET` | `/cart` | Authenticated | Tallies current relational items stored in the user's cart cache. |
+| `POST` | `/cart/add/<int:product_id>` | Authenticated | Ingests product IDs, appends item counts to the cart mapping structure. |
+| `POST` | `/cart/remove/<int:cart_id>` | Authenticated | Purges target line items out of the active user's cart cache records. |
+| `GET` | `/wallet` | Authenticated | Renders the virtual currency balance board and historical transaction paths. |
+| `POST` | `/wallet/add` | Authenticated | Ingests hardcoded credit strings, safely wrapping amounts as high-precision Decimals. |
+| `POST` | `/checkout` | Authenticated | Executes transaction isolation checks, records permanent invoice lines, clears cart data. |
+| `GET` | `/orders` | Authenticated | Pulls historical checkout lines, sorting orders from newest to oldest. |
+
+---
+
+## 🔄 Core Workflows
+
+### 1. The High-Integrity Checkout Lifecycle (Atomic ACID Step)
+
+```
+[User Clicks Checkout Form Button]
+                │
+                ▼
+  Backend Opens Transaction Block (db.session.begin)
+                │
+                ▼
+  Pessimistic Locking Query Executed
+  -> SELECT wallet_balance FROM users WHERE id = :id FOR UPDATE;
+  (Neon Database locks user's balance row against any parallel manipulation attempts)
+                │
+                ▼
+  Check: Is user.wallet_balance >= cart_total?
+                ├───[ NO ]──> db.session.rollback() -> Flash Insufficient Balance Alert
+                │
+                └───[ YES ]─> Execute State Updates:
+                                1. Deduct exact Decimal cost from balance string
+                                2. Create master Invoice row in 'orders' table
+                                3. Migrate cached lines to permanent 'order_items' table
+                                4. Record accounting trail row inside 'wallet_transactions'
+                                5. Purge user lines out of 'cart' cache
+                                │
+                                ▼
+                       db.session.commit()
+                                │
+                                ▼
+             Flash Success Alert -> Send 302 Redirect to /orders
+
+```
+
+### 2. Password Recovery Mock Token Flow
+
+Because sending real-world emails requires third-party configuration, ParodyMart safely replicates a secure infrastructure pipeline through server log routing:
+
+1. User requests recovery at `/forgot-password` providing their username email.
+2. The system executes an identifier lookup. If matching, it mints a URL-safe secure token string: `secrets.token_urlsafe(32)`.
+3. The token binds directly to the model user record database field (`reset_token`).
+4. Instead of sending an email, the backend prints the private endpoint directly into the deployment console logs:
+`🔑 PASSWORD RESET SYSTEM SIMULATION: http://127.0.0.1:5000/reset-password/b_secureTokenString...`
+5. Navigating to the generated URL validates the token parameters, allows inputting an override string, and resets the tracking field back to `None` for single-use protection.
+
+---
+
+## 🧠 Data Architecture Design (PostgreSQL Blueprint)
+
+```sql
+-- 1. Master Accounts Structure
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    wallet_balance DECIMAL(10,2) DEFAULT 0.00,
+    is_admin BOOLEAN DEFAULT FALSE,
+    reset_token VARCHAR(100) UNIQUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 2. Store Inventory Catalog
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    image_url VARCHAR(500) NOT NULL,
+    stock INT DEFAULT 999,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- 3. High-Speed Interactive Cart States Cache
+CREATE TABLE cart (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    product_id INT REFERENCES products(id) ON DELETE CASCADE NOT NULL,
+    quantity INT DEFAULT 1
+);
+
+-- 4. Invoiced Orders Ledger
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE SET NULL NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    status VARCHAR(20) DEFAULT 'Completed',
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- 5. Hardened Post-Checkout Line Items Capture
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(id) ON DELETE CASCADE NOT NULL,
+    product_id INT REFERENCES products(id) ON DELETE RESTRICT NOT NULL,
+    quantity INT NOT NULL,
+    price_at_time DECIMAL(10,2) NOT NULL
+);
+
+-- 6. Immutable Accounting Audit Ledger
+CREATE TABLE wallet_transactions (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    type VARCHAR(20) NOT NULL,          -- Evaluates strictly as 'credit' or 'debit'
+    description VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+```
 
 ---
 
 ## ⚙️ Local Development Setup
 
-To run this repository locally on your machine, follow these steps:
+To test and run the ParodyMart codebase on your local system, execute the following instructions:
 
-### 1. Clone the repository and navigate inward
+### 1. Clone Project Directory Repository
+
 ```bash
 git clone [https://github.com/YOUR_USERNAME/parody-mart.git](https://github.com/YOUR_USERNAME/parody-mart.git)
 cd parody-mart
 
 ```
 
-### 2. Create and activate an isolated Python virtual environment
+### 2. Construct and Initialize Python Virtual Environment
 
 ```bash
 python -m venv venv
 
-# On macOS/Linux:
-source venv/bin/activate
-# On Windows (Command Prompt):
+# On Windows systems (Command Prompt):
 venv\Scripts\activate
+# On macOS / Linux systems:
+source venv/bin/activate
 
 ```
 
-### 3. Install required environment dependencies
+### 3. Install Frozen Application Packages Checklist
 
 ```bash
 pip install -r requirements.txt
 
 ```
 
-### 4. Configure local environment environment variables
+### 4. Create Hidden Environment Variables Container
 
-Create a file named `.env` in the root folder and supply your secret values:
+Construct a file named `.env` exactly inside your root workspace directory and input your runtime keys:
 
 ```env
-SECRET_KEY=any_random_secure_hexadecimal_string
+SECRET_KEY=b9a826c71120f3e843ab721c9aef11
 DATABASE_URL=postgresql://your_neon_username:your_password@your_neon_host/neondb?sslmode=require
 
 ```
 
-### 5. Initialize & Seed your Database
+### 5. Execute Relational Seeder Script
 
-Run the seeder automation script to let SQLAlchemy map out the schema into Neon and inject your initial comedy items:
+Run the automation seeder to compile table blueprints straight to your Neon cloud cluster and plant your mock products:
 
 ```bash
 python seed.py
 
 ```
 
-### 6. Boot the local development server
+### 6. Boot Development Server Instance
 
 ```bash
 python run.py
 
 ```
 
-Open your browser and visit: `http://127.0.0.1:5000/`
+Open your web browser tool and access: `http://127.0.0.1:5000/`
 
 ---
 
-## ⚠️ Important Hosting Disclaimer
+## ⚠️ Free Cloud Tier Hosting Disclaimer
 
-> **NOTE FOR EVALUATORS:** This application is hosted using Render's free operational cloud container tier. Free containers automatically spin down into a sleep state after 15 minutes of user inactivity. If clicking the live application link for the first time, the system may require **up to 1 minute** to wake up and spin up the backend container environment. Thank you for your patience!
+> **IMPORTANT CONFIGURATION NOTE:** ParodyMart uses Render's free deployment web container tiers. Free infrastructure containers automatically enter a sleep cycle after 15 minutes of inactivity. When launching the live URL for the first time, allow **up to 60 seconds** for Render's routing mechanics to boot the container context back online. Thank you!
 
 ---
 
 ## 📜 License
 
-This project is open-source and available under the [MIT License](https://www.google.com/search?q=LICENSE).
+This software architecture is released under the open source [MIT License]
+
+```
+_
+
+```
